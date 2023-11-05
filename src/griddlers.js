@@ -42,6 +42,15 @@ class Solver {
     return this.data[i] === type;
   }
 
+  contains(type, from, to) {
+    for (let i = from; i <= to; i++) {
+      if (this.is(type, i)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   parse(from, to) {
     let runs = [];
     let current = this.data[from];
@@ -105,30 +114,37 @@ class Solver {
   }
 
   overlap(hints, from, to) {
-    let offsetLeft = from;
-    let offsetRight = to;
+    let start = from;
+    let end = to;
 
-    while (this.is(Cell.SPACE, offsetLeft)) {
-      offsetLeft++;
-    }
+    let endIndexes = [];
+    let reverseEndIndexes = [];
 
-    while (this.is(Cell.SPACE, offsetRight)) {
-      offsetRight--;
+    for (let i = 0; i < hints.length; i++) {
+      while (this.contains(Cell.SPACE, start, start + hints[i] - 1)) {
+        start++;
+        if (start > to) {
+          return;
+        }
+      }
+
+      while (this.contains(Cell.SPACE, end - hints[hints.length - 1 - i] + 1, end)) {
+        end--;
+        if (end < from) {
+          return;
+        }
+      }
+
+      endIndexes.push(start + hints[i] - 1);
+      reverseEndIndexes.push(end - hints[hints.length - 1 - i] + 1);
+
+      start += hints[i] + 1;
+      end -= hints[hints.length - 1 - i] + 1;
     }
 
     for (let i = 0; i < hints.length; i++) {
-      let hint = hints[i];
-      let startIndex = offsetLeft;
-      for (let j = 0; j < i; j++) {
-        startIndex += hints[j] + 1;
-      }
-      let endIndex = startIndex + hint - 1;
-
-      let reverseStartIndex = offsetRight;
-      for (let j = hints.length - 1; j > i; j--) {
-        reverseStartIndex -= hints[j] + 1;
-      }
-      let reverseEndIndex = reverseStartIndex - hint + 1;
+      let endIndex = endIndexes[i];
+      let reverseEndIndex = reverseEndIndexes[hints.length - 1 - i];
 
       if (reverseEndIndex <= endIndex) {
         this.set(Cell.FULL, reverseEndIndex, endIndex);
@@ -314,7 +330,7 @@ class Solver {
 
     let empty = this.getRuns(Cell.EMPTY, from, to);
     for (let run of empty) {
-      if (hints.every(h => h > run.size)) {
+      if (hints.every(h => h > run.size && this.is(Cell.SPACE, run.start - 1) && this.is(Cell.SPACE, run.end + 1))) {
         this.set(Cell.SPACE, run.start, run.end);
       }
     }
