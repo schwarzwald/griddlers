@@ -1,9 +1,10 @@
 import './style.css';
-import { solve, findFilledRanges, Cell } from './griddlers';
+import { solve, Cell } from './griddlers';
 
 function attach() {
-  const hints = [5, 4, 3];
-  const row = [-1, -1, -1, -1, 1, 0, -1, 0, -1, -1, -1, -1, -1, 1, -1, -1, 0, 1, 1, 1, -1, -1, -1, -1, -1];//, -1, -1, -1, -1, -1];
+  const hints = [5, 4, 3, 3];
+  //const row = [-1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, -1, 0, -1, -1, 0, -1, 0, -1, -1, 0, 1, 1, 1, -1, -1, -1, -1, -1];//, -1, -1, -1, -1, -1];
+  const row = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, 0, -1, 0, -1, -1, 0, 1, 1, 1, -1, -1, -1, -1, -1];//, -1, -1, -1, -1, -1];
   //row.fill(Cell.UNKNOWN);
 
   const row2 = new Array(25);
@@ -18,7 +19,6 @@ function attach() {
 
   draw(container, [2, 1], row2);
   draw(container, [2, 1], solve([2, 1], row2));
-  console.log(findFilledRanges(solved))
 }
 
 function draw(container, hints, data) {
