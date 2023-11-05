@@ -123,16 +123,10 @@ class Solver {
     for (let i = 0; i < hints.length; i++) {
       while (this.contains(Cell.SPACE, start, start + hints[i] - 1)) {
         start++;
-        if (start > to) {
-          return;
-        }
       }
 
       while (this.contains(Cell.SPACE, end - hints[hints.length - 1 - i] + 1, end)) {
         end--;
-        if (end < from) {
-          return;
-        }
       }
 
       endIndexes.push(start + hints[i] - 1);
